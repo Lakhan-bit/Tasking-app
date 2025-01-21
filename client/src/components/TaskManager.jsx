@@ -80,7 +80,7 @@ const TaskManager = () => {
     try {
       if (editingTask) {
         await axios.patch(
-          `http://localhost:5000/api/tasks/${editingTask._id}`,
+          `http://localhost:5000/api/tasks/${editingTask.id}`,
           { ...taskForm, date: selectedDate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -134,7 +134,7 @@ const TaskManager = () => {
       <Calendar onClickDay={handleDateClick} value={selectedDate} />
       <h3 className="task-date">Tasks for {selectedDate?.toDateString()}</h3>
       {tasksForSelectedDate?.map((task) => (
-        <div key={task?._id} className="task-item">
+        <div key={task?.id} className="task-item">
           <h4 className="task-name">{task?.title}</h4>
           <p className="task-desc">{task?.description}</p>
           <button onClick={() => handleEdit(task)} className="btn edit-task">

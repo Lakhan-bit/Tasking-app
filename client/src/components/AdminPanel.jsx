@@ -12,6 +12,7 @@ const AdminPanel = () => {
   const [taskForm, setTaskForm] = useState({ title: '', description: '', status:'' });
   const [editingTask, setEditingTask] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [usersToDelete,setUsersToDelete] = useState({});
 
   const token = localStorage.getItem('auth') ? JSON.parse(localStorage.getItem('auth')).token : null;
   // console.log("token...",token);
@@ -55,6 +56,11 @@ const AdminPanel = () => {
     }
   };
 
+  const checkboxHandler = (e)=>{
+    console.log('checkbox...',e.target.name);
+    setUsersToDelete({...usersToDelete,[e.target.name]:e.target.name});
+  }
+
   const handleInputChange = (e) => {
     setTaskForm({ ...taskForm, [e.target.name]: e.target.value });
   };
@@ -76,7 +82,7 @@ const AdminPanel = () => {
     try {
       if (editingTask) {
         await axios.patch(
-          `http://localhost:5000/api/tasks/${editingTask._id}`,
+          `http://localhost:5000/api/tasks/${editingTask.id}`,
           { ...taskForm, date: selectedDate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -92,6 +98,34 @@ const AdminPanel = () => {
     }
   };
 
+  const deleteHandler = async(userId)=>{
+    // console.log("usersToDelete", usersToDelete);
+    
+    // console.log("usersToDelete", usersArray);
+    try {
+      await axios.delete(`http://localhost:5000/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  }
+
+  const deleteUsers = async()=>{
+    const usersArray = Object.keys(usersToDelete);
+    if(usersArray.length ==0){
+      console.log('users not selected')
+    }else{
+      for(let i=0;i<usersArray.length;i++){
+        await deleteHandler(usersArray[i])
+      }
+      console.log('users deleted')
+    }
+    
+    
+  }
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -100,26 +134,28 @@ const AdminPanel = () => {
     <div className="admin-panel">
       <h2 className="admin-title">Admin Panel</h2>
       <h3 className="admin-section-title">Users</h3>
+      <button onClick={deleteUsers}>Delete</button>
       {users?.map((user) => (
-        <div key={user?._id} className="user-item">
+        <div key={user?.id} className="user-item">
           <p className="user-info">
             {user?.name} ({user?.email})
           </p>
-          <button onClick={() => fetchTasks(user?._id)} className="btn view-tasks">
+          <button onClick={() => fetchTasks(user?.id)} className="btn view-tasks">
             View Tasks
           </button>
+          <input type="checkbox" onClick={checkboxHandler} name={user?.id}/>
         </div>
       ))}
       <h3 className="admin-section-title">Tasks</h3>
       {tasks?.map((task) => (
-        <div key={task._id} className="task-item">
+        <div key={task.id} className="task-item">
           <h4 className="task-title">{task?.title}</h4>
           <p className="task-desc">{task?.description}</p>
           <button onClick={() => handleEdit(task)} className="btn edit-task">
             Edit
           </button>
           <button
-            onClick={() => handleDeleteTask(task?._id)}
+            onClick={() => handleDeleteTask(task?.id)}
             className="btn delete-task"
           >
             Delete Task
