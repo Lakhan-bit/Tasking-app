@@ -56,10 +56,19 @@ const AdminPanel = () => {
     }
   };
 
-  const checkboxHandler = (e)=>{
-    console.log('checkbox...',e.target.name);
-    setUsersToDelete({...usersToDelete,[e.target.name]:e.target.name});
-  }
+  const checkboxHandler = (e) => {
+    const { name, checked } = e.target;
+  
+    setUsersToDelete((prev) => {
+      if (checked) {
+        return { ...prev, [name]: name };
+      } else {
+        const updatedUsers = { ...prev };
+        delete updatedUsers[name];
+        return updatedUsers;
+      }
+    });
+  };
 
   const handleInputChange = (e) => {
     setTaskForm({ ...taskForm, [e.target.name]: e.target.value });
@@ -106,25 +115,33 @@ const AdminPanel = () => {
       await axios.delete(`http://localhost:5000/api/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      setUsersToDelete((prev) => {
+        const updatedUsers = { ...prev };
+        delete updatedUsers[userId];
+        return updatedUsers;
+      });
       fetchUsers();
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   }
 
-  const deleteUsers = async()=>{
+  const deleteUsers = async () => {
     const usersArray = Object.keys(usersToDelete);
-    if(usersArray.length ==0){
-      console.log('users not selected')
-    }else{
-      for(let i=0;i<usersArray.length;i++){
-        await deleteHandler(usersArray[i])
-      }
-      console.log('users deleted')
+    console.log('usersToDelete',usersToDelete)
+    if (usersArray.length === 0) {
+      console.log("Users not selected");
+      return;
     }
-    
-    
-  }
+  
+    try {
+      await Promise.all(usersArray.map(user => deleteHandler(user)));
+      console.log("Users deleted");
+    } catch (error) {
+      console.error("Error deleting users:", error);
+    }
+  };
+  
 
   useEffect(() => {
     fetchUsers();
