@@ -18,8 +18,8 @@ const AuthForm = () => {
     e.preventDefault();
     try {
       const url = isLogin
-        ? 'http://localhost:5000/api/auth/login'
-        : 'http://localhost:5000/api/auth/register';
+        ? 'http://127.0.0.1:5001/tasking-app-937a3/us-central1/loginUser'
+        : 'http://127.0.0.1:5001/tasking-app-937a3/us-central1/RegisterUsers';
       const { data } = await axios.post(url, formData);
 
       if (isLogin) {

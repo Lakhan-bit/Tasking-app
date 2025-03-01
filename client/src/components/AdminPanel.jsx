@@ -19,7 +19,7 @@ const AdminPanel = () => {
   
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/users', {
+      const { data } = await axios.get('http://127.0.0.1:5001/tasking-app-937a3/us-central1/getAllUsers', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(data);
@@ -31,7 +31,7 @@ const AdminPanel = () => {
 
   const fetchTasks = async (userId) => {
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/tasks/${userId}`, {
+      const { data } = await axios.get(`http://127.0.0.1:5001/tasking-app-937a3/us-central1/getUserTasks?uid=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
@@ -47,7 +47,7 @@ const AdminPanel = () => {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, {
+      await axios.delete(`http://127.0.0.1:5001/tasking-app-937a3/us-central1/deleteTask?uid=${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchTasks(selectedUser);
@@ -91,7 +91,7 @@ const AdminPanel = () => {
     try {
       if (editingTask) {
         await axios.patch(
-          `http://localhost:5000/api/tasks/${editingTask.id}`,
+          `http://127.0.0.1:5001/tasking-app-937a3/us-central1/updateTask?uid=${editingTask.id}`,
           { ...taskForm, date: selectedDate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -112,7 +112,7 @@ const AdminPanel = () => {
     
     // console.log("usersToDelete", usersArray);
     try {
-      await axios.delete(`http://localhost:5000/api/users/${userId}`, {
+      await axios.delete(`http://127.0.0.1:5001/tasking-app-937a3/us-central1/deleteUser?uid=${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsersToDelete((prev) => {

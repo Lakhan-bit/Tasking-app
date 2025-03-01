@@ -17,7 +17,7 @@ const TaskManager = () => {
   
   const fetchTasks = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/tasks', {
+      const { data } = await axios.get('http://127.0.0.1:5001/tasking-app-937a3/us-central1/getTasks', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(data);
@@ -31,7 +31,7 @@ const TaskManager = () => {
   // Fetch profile
   const fetchProfile = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/users/profile', {
+      const { data } = await axios.get('http://127.0.0.1:5001/tasking-app-937a3/us-central1/getUserProfile', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(data);
@@ -47,7 +47,7 @@ const TaskManager = () => {
     e.preventDefault();
     try {
       await axios.patch(
-        'http://localhost:5000/api/users/profile',
+        'http://127.0.0.1:5001/tasking-app-937a3/us-central1/updateUserProfile',
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,13 +80,13 @@ const TaskManager = () => {
     try {
       if (editingTask) {
         await axios.patch(
-          `http://localhost:5000/api/tasks/${editingTask.id}`,
+          `http://127.0.0.1:5001/tasking-app-937a3/us-central1/updateTask?uid=${editingTask.id}`,
           { ...taskForm, date: selectedDate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
-          'http://localhost:5000/api/tasks',
+          'http://127.0.0.1:5001/tasking-app-937a3/us-central1/createTask',
           { ...taskForm, date: selectedDate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
